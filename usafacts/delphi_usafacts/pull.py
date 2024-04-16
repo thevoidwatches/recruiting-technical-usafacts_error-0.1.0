@@ -168,11 +168,20 @@ def pull_usafacts_data(base_url: str, metric: str, logger: Logger, cache: str=No
         raise ValueError("Differing number of days by fips")
     min_timestamp = min(unique_days)
     max_timestamp = max(unique_days)
-    n_days = (max_timestamp - min_timestamp) / np.timedelta64(1, "D") + 1
+    n_days = int((max_timestamp - min_timestamp) / np.timedelta64(1, "D") + 1)
+    # checks that no dates are missing in the range to be returned
     if n_days != len(unique_days):
-        raise ValueError(
-            f"Not every day between {min_timestamp} and "
-            "{max_timestamp} is represented."
+        # finds the days that are missing for the error message.
+        missing_days = []
+        j = 0
+        for i in range(n_days):
+            day = min_timestamp + i*np.timedelta64(1, "D")
+            if day == unique_days[j]:
+                j += 1
+            else:
+                missing_days.append(np.datetime_as_string(day, unit='D'))
+        print(
+            f"Not every day between {np.datetime_as_string(min_timestamp, unit='D')} and {np.datetime_as_string(max_timestamp, unit='D')} is represented. The following dates are missing:\n{missing_days}"
         )
     return df.loc[
         df["timestamp"] >= min_ts,
