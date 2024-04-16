@@ -181,7 +181,7 @@ def pull_usafacts_data(base_url: str, metric: str, logger: Logger, cache: str=No
             else:
                 missing_days.append(np.datetime_as_string(day, unit='D'))
         print(
-            f"Not every day between {np.datetime_as_string(min_timestamp, unit='D')} and {np.datetime_as_string(max_timestamp, unit='D')} is represented. The following dates are missing:\n{missing_days}"
+            f"ERROR: Not every day between {np.datetime_as_string(min_timestamp, unit='D')} and {np.datetime_as_string(max_timestamp, unit='D')} is represented. The following dates are missing:\n{missing_days}"
         )
     return df.loc[
         df["timestamp"] >= min_ts,
